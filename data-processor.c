@@ -26,7 +26,7 @@ uint8_t data_processor_count(void) {
     }
     pos++;
   }
-  return count;
+  return ++count;
 }
 
 bool data_processor_get_string(char** str) {
