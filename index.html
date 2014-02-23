@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Data Processor by smallstoneapps</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Data Processor</h1>
+        <p>Pebble library to extract strings, ints and booleans from a long string.</p>
+
+        <p class="view"><a href="https://github.com/smallstoneapps/data-processor">View the Project on GitHub <small>smallstoneapps/data-processor</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/smallstoneapps/data-processor/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/smallstoneapps/data-processor/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/smallstoneapps/data-processor">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="data-processor" class="anchor" href="#data-processor"><span class="octicon octicon-link"></span></a>Data Processor</h1>
+
+<p>Pebble library to extract strings, ints and booleans from a long string.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-c"><pre><span class="c1">// This is not a complete example,</span>
+<span class="c1">// but should demonstrate the basic usage of Bitmap Loader.</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">parse_data</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">data_processor_init</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="sc">'|'</span><span class="p">);</span>
+  <span class="kt">uint8_t</span> <span class="n">num_strings</span> <span class="o">=</span> <span class="n">data_processor_count</span><span class="p">();</span>
+  <span class="kt">char</span><span class="o">**</span> <span class="n">strings</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_strings</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">uint8_t</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">num_strings</span><span class="p">;</span> <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">data_processor_get_string</span><span class="p">(</span><span class="o">&amp;</span><span class="n">strings</span><span class="p">[</span><span class="n">n</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="function-documentation" class="anchor" href="#function-documentation"><span class="octicon octicon-link"></span></a>Function Documentation</h2>
+
+<p>Initialise the library. Takes the long string and the delimiter character as arguments.</p>
+
+<pre><code>bool data_processor_init(char* data, char delim);
+</code></pre>
+
+<p>Returns the number of elements in the long string.</p>
+
+<pre><code>uint8_t data_processor_count(void);
+</code></pre>
+
+<p>Load the next substring from the long string. Takes a pointer to a string as an argument.</p>
+
+<pre><code>bool data_processor_get_string(char** str);
+</code></pre>
+
+<p>Load the next item as a boolean from the long string. Takes a pointer to a boolean as an argument.</p>
+
+<pre><code>bool data_processor_get_bool(bool* boolean);
+</code></pre>
+
+<p>Load the next item as an int from the long string. Takes a pointer to a uint8_t as an argument.</p>
+
+<pre><code>bool data_processor_get_uint8(uint8_t* num);
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/smallstoneapps">smallstoneapps</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
