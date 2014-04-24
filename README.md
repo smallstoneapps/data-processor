@@ -5,8 +5,8 @@ Pebble library to extract strings, ints and booleans from a long string of data.
 ## Usage
 
 ````c
-// This is not a complete example,
-// but should demonstrate the basic usage of Bitmap Loader.
+// This is not a complete example, but should demonstrate 
+// the basic usage of Data Processor.
 
 static void parse_data(char* data) {
   ProcessingState* state = data_processor_create(data, '|');
@@ -24,8 +24,8 @@ Unit tests for Data Processor exist in the `tests` folder.
 
 To run the tests:
 
-````c
-gcc data-processor.c ../src/data-processor.c -I ~/pebble-dev/PebbleSDK-2/Pebble/include -I . -std=c11 -o tests
+````sh
+gcc data-processor.c ../src/data-processor.c -I $PEBBLE_SDK/Pebble/include -I . -std=c11 -o tests
 ./tests
 ````
 
