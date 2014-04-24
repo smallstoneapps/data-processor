@@ -4,85 +4,129 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Data Processor by smallstoneapps</title>
-
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
   <body>
-    <div class="wrapper">
+
       <header>
         <h1>Data Processor</h1>
         <p>Pebble library to extract strings, ints and booleans from a long string.</p>
-
-        <p class="view"><a href="https://github.com/smallstoneapps/data-processor">View the Project on GitHub <small>smallstoneapps/data-processor</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/smallstoneapps/data-processor/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/smallstoneapps/data-processor/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/smallstoneapps/data-processor">View On <strong>GitHub</strong></a></li>
-        </ul>
       </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/smallstoneapps/data-processor" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/smallstoneapps/data-processor/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/smallstoneapps/data-processor/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
       <section>
         <h1>
 <a name="data-processor" class="anchor" href="#data-processor"><span class="octicon octicon-link"></span></a>Data Processor</h1>
 
-<p>Pebble library to extract strings, ints and booleans from a long string.</p>
+<p>Pebble library to extract strings, ints and booleans from a long string of data.</p>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<div class="highlight highlight-c"><pre><span class="c1">// This is not a complete example,</span>
-<span class="c1">// but should demonstrate the basic usage of Bitmap Loader.</span>
+<div class="highlight highlight-c"><pre><span class="c1">// This is not a complete example, but should demonstrate </span>
+<span class="c1">// the basic usage of Data Processor.</span>
 
 <span class="k">static</span> <span class="kt">void</span> <span class="nf">parse_data</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
-  <span class="n">data_processor_init</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="sc">'|'</span><span class="p">);</span>
+  <span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span> <span class="o">=</span> <span class="n">data_processor_create</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="sc">'|'</span><span class="p">);</span>
   <span class="kt">uint8_t</span> <span class="n">num_strings</span> <span class="o">=</span> <span class="n">data_processor_count</span><span class="p">();</span>
   <span class="kt">char</span><span class="o">**</span> <span class="n">strings</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_strings</span><span class="p">);</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">uint8_t</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">num_strings</span><span class="p">;</span> <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">data_processor_get_string</span><span class="p">(</span><span class="o">&amp;</span><span class="n">strings</span><span class="p">[</span><span class="n">n</span><span class="p">]);</span>
+    <span class="n">strings</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_processor_get_string</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 
 <h2>
+<a name="tests" class="anchor" href="#tests"><span class="octicon octicon-link"></span></a>Tests</h2>
+
+<p>Unit tests for Data Processor exist in the <code>tests</code> folder.</p>
+
+<p>To run the tests:</p>
+
+<div class="highlight highlight-sh"><pre>gcc data-processor.c ../src/data-processor.c -I <span class="nv">$PEBBLE_SDK</span>/Pebble/include -I . -std<span class="o">=</span>c11 -o tests
+./tests
+</pre></div>
+
+<h2>
 <a name="function-documentation" class="anchor" href="#function-documentation"><span class="octicon octicon-link"></span></a>Function Documentation</h2>
 
-<p>Initialise the library. Takes the long string and the delimiter character as arguments.</p>
+<p>Initialise the global Data Processor state object with a string of data and a
+delimiter character.</p>
 
-<pre><code>bool data_processor_init(char* data, char delim);
-</code></pre>
+<div class="highlight highlight-c"><pre><span class="kt">void</span> <span class="nf">data_processor_init</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="kt">char</span> <span class="n">delim</span><span class="p">);</span>
+</pre></div>
 
-<p>Returns the number of elements in the long string.</p>
+<p>Create and return a new Data Processor state object with a string of data and a
+delimiter character.</p>
 
-<pre><code>uint8_t data_processor_count(void);
-</code></pre>
+<div class="highlight highlight-c"><pre><span class="n">ProcessingState</span><span class="o">*</span> <span class="nf">data_processor_create</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="kt">char</span> <span class="n">delim</span><span class="p">);</span>
+</pre></div>
 
-<p>Load the next substring from the long string. Takes a pointer to a string as an argument.</p>
+<p>Destroy a Data Processor state object.</p>
 
-<pre><code>bool data_processor_get_string(char** str);
-</code></pre>
+<div class="highlight highlight-c"><pre><span class="kt">void</span> <span class="nf">data_processor_destroy</span><span class="p">(</span><span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span><span class="p">);</span>
+</pre></div>
 
-<p>Load the next item as a boolean from the long string. Takes a pointer to a boolean as an argument.</p>
+<p>Destroys the global Data Processor state object.</p>
 
-<pre><code>bool data_processor_get_bool(bool* boolean);
-</code></pre>
+<div class="highlight highlight-c"><pre><span class="kt">void</span> <span class="nf">data_processor_deinit</span><span class="p">();</span>
+</pre></div>
 
-<p>Load the next item as an int from the long string. Takes a pointer to a uint8_t as an argument.</p>
+<p>Get the global Data Processor state object, used for passing to the functions below.</p>
 
-<pre><code>bool data_processor_get_uint8(uint8_t* num);
-</code></pre>
+<div class="highlight highlight-c"><pre><span class="n">ProcessingState</span><span class="o">*</span> <span class="nf">data_processor_get_global</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</pre></div>
+
+<p>Get the count of the remaining subelements for a Data Processor state object.</p>
+
+<div class="highlight highlight-c"><pre><span class="kt">uint8_t</span> <span class="nf">data_processor_count</span><span class="p">(</span><span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span><span class="p">);</span>
+</pre></div>
+
+<p>Get the next element as a string for a Data Processor state object.</p>
+
+<div class="highlight highlight-c"><pre><span class="kt">char</span><span class="o">*</span> <span class="nf">data_processor_get_string</span><span class="p">(</span><span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span><span class="p">);</span>
+</pre></div>
+
+<p>Get the next element as a bool for a Data Processor state object.</p>
+
+<div class="highlight highlight-c"><pre><span class="kt">bool</span> <span class="nf">data_processor_get_bool</span><span class="p">(</span><span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span><span class="p">);</span>
+</pre></div>
+
+<p>Get the next element as an int for a Data Processor state object.</p>
+
+<div class="highlight highlight-c"><pre><span class="kt">int</span> <span class="nf">data_processor_get_int</span><span class="p">(</span><span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span><span class="p">);</span>
+</pre></div>
       </section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/smallstoneapps">smallstoneapps</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        <p>Project maintained by <a href="https://github.com/smallstoneapps">smallstoneapps</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
 </html>
