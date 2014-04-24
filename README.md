@@ -1,6 +1,6 @@
 # Data Processor
 
-Pebble library to extract strings, ints and booleans from a long string.
+Pebble library to extract strings, ints and booleans from a long string of data.
 
 ## Usage
 
@@ -9,33 +9,80 @@ Pebble library to extract strings, ints and booleans from a long string.
 // but should demonstrate the basic usage of Bitmap Loader.
 
 static void parse_data(char* data) {
-  data_processor_init(data, '|');
+  ProcessingState* state = data_processor_create(data, '|');
   uint8_t num_strings = data_processor_count();
   char** strings = malloc(sizeof(char*) * num_strings);
   for (uint8_t n = 0; n < num_strings; n += 1) {
-    data_processor_get_string(&strings[n]);
+    strings[n] = data_processor_get_string(state);
   }
 }
 ````
 
+## Tests
+
+Unit tests for Data Processor exist in the `tests` folder.
+
+To run the tests:
+
+````c
+gcc data-processor.c ../src/data-processor.c -I ~/pebble-dev/PebbleSDK-2/Pebble/include -I . -std=c11 -o tests
+./tests
+````
+
 ## Function Documentation
 
-Initialise the library. Takes the long string and the delimiter character as arguments.
+Initialise the global Data Processor state object with a string of data and a
+delimiter character.
 
-    bool data_processor_init(char* data, char delim);
+````c
+void data_processor_init(char* data, char delim);
+````
 
-Returns the number of elements in the long string.
+Create and return a new Data Processor state object with a string of data and a
+delimiter character.
 
-    uint8_t data_processor_count(void);
+````c
+ProcessingState* data_processor_create(char* data, char delim);
+````
 
-Load the next substring from the long string. Takes a pointer to a string as an argument.
+Destroy a Data Processor state object.
 
-    bool data_processor_get_string(char** str);
+````c
+void data_processor_destroy(ProcessingState* state);
+````
 
-Load the next item as a boolean from the long string. Takes a pointer to a boolean as an argument.
+Destroys the global Data Processor state object.
 
-    bool data_processor_get_bool(bool* boolean);
+````c
+void data_processor_deinit();
+````
 
-Load the next item as an int from the long string. Takes a pointer to a uint8_t as an argument.
+Get the global Data Processor state object, used for passing to the functions below.
 
-    bool data_processor_get_uint8(uint8_t* num);
+````c
+ProcessingState* data_processor_get_global(void);
+````
+
+Get the count of the remaining subelements for a Data Processor state object.
+
+````c
+uint8_t data_processor_count(ProcessingState* state);
+````
+
+Get the next element as a string for a Data Processor state object.
+
+````c
+char* data_processor_get_string(ProcessingState* state);
+````
+
+Get the next element as a bool for a Data Processor state object.
+
+````c
+bool data_processor_get_bool(ProcessingState* state);
+````
+
+Get the next element as an int for a Data Processor state object.
+
+````c
+int data_processor_get_int(ProcessingState* state);
+````
