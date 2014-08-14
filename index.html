@@ -4,50 +4,39 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Data Processor by smallstoneapps</title>
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
   <body>
-
+    <div class="wrapper">
       <header>
         <h1>Data Processor</h1>
         <p>Pebble library to extract strings, ints and booleans from a long string.</p>
+        <p class="view"><a href="https://github.com/smallstoneapps/data-processor">View the Project on GitHub <small>smallstoneapps/data-processor</small></a></p>
+        <ul>
+          <li><a href="https://github.com/smallstoneapps/data-processor/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/smallstoneapps/data-processor/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/smallstoneapps/data-processor">View On <strong>GitHub</strong></a></li>
+        </ul>
       </header>
-
-      <div id="banner">
-        <span id="logo"></span>
-
-        <a href="https://github.com/smallstoneapps/data-processor" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/smallstoneapps/data-processor/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/smallstoneapps/data-processor/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
-
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
       <section>
         <h1>
-<a name="data-processor" class="anchor" href="#data-processor"><span class="octicon octicon-link"></span></a>Data Processor</h1>
+<a name="data-processor-101--" class="anchor" href="#data-processor-101--"><span class="octicon octicon-link"></span></a>Data Processor 1.0.1  <a href="https://travis-ci.org/smallstoneapps/data-processor"><img src="https://travis-ci.org/smallstoneapps/data-processor.png?branch=master" alt="Build Status"></a>
+</h1>
 
 <p>Pebble library to extract strings, ints and booleans from a long string of data.</p>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<div class="highlight highlight-c"><pre><span class="c1">// This is not a complete example, but should demonstrate </span>
+<div class="highlight highlight-c"><pre><span class="c1">// This is not a complete example, but should demonstrate</span>
 <span class="c1">// the basic usage of Data Processor.</span>
 
 <span class="k">static</span> <span class="kt">void</span> <span class="nf">parse_data</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
@@ -67,8 +56,7 @@
 
 <p>To run the tests:</p>
 
-<div class="highlight highlight-sh"><pre>gcc data-processor.c ../src/data-processor.c -I <span class="nv">$PEBBLE_SDK</span>/Pebble/include -I . -std<span class="o">=</span>c11 -o tests
-./tests
+<div class="highlight highlight-sh"><pre>make <span class="nb">test</span>
 </pre></div>
 
 <h2>
@@ -121,11 +109,11 @@ delimiter character.</p>
 <div class="highlight highlight-c"><pre><span class="kt">int</span> <span class="nf">data_processor_get_int</span><span class="p">(</span><span class="n">ProcessingState</span><span class="o">*</span> <span class="n">state</span><span class="p">);</span>
 </pre></div>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/smallstoneapps">smallstoneapps</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
-      </footer>
     </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/smallstoneapps">smallstoneapps</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
