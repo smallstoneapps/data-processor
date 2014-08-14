@@ -1,4 +1,4 @@
-# Data Processor
+# Data Processor  [![Build Status](https://travis-ci.org/smallstoneapps/data-processor.png?branch=master)](https://travis-ci.org/smallstoneapps/data-processor)
 
 Pebble library to extract strings, ints and booleans from a long string of data.
 
@@ -25,8 +25,7 @@ Unit tests for Data Processor exist in the `tests` folder.
 To run the tests:
 
 ````c
-gcc data-processor.c ../src/data-processor.c -I ~/pebble-dev/PebbleSDK-2/Pebble/include -I . -std=c11 -o tests
-./tests
+make test
 ````
 
 ## Function Documentation

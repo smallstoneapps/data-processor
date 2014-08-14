@@ -1,6 +1,6 @@
 /*
 
-Data Processor v1.0
+Data Processor v1.0.1
 A Pebble library for extracting elements from a delimited string.
 http://smallstoneapps.github.io/data-processor/
 
@@ -37,6 +37,7 @@ tests/data-processor.c
 #include "unit.h"
 #include "../src/data-processor.h"
 
+// Colour code definitions to make the output all pretty.
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
@@ -46,11 +47,15 @@ tests/data-processor.c
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
 
+// Keep track of how many tests have run, and how many have passed.
 int tests_run = 0;
 int tests_passed = 0;
 const int NUM_TESTS = 15;
 
 static void before_each(void) {
+}
+
+static void after_each(void) {
   data_processor_deinit();
 }
 
@@ -222,7 +227,9 @@ static char* all_tests() {
 }
 
 int main(int argc, char **argv) {
-  printf("%s----------------------------\nRunning Data Processor Tests\n----------------------------\n%s", KCYN, KNRM);
+  printf("%s----------------------------\n", KCYN);
+  printf("Running Data Processor Tests\n");
+  printf("----------------------------\n%s", KNRM);
   char* result = all_tests();
   if (0 != result) {
     printf("%sFailed Test:%s %s\n", KRED, KNRM, result);
