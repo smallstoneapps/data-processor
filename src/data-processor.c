@@ -1,6 +1,6 @@
 /*
 
-Data Processor v1.0.1
+Data Processor v1.1
 A Pebble library for extracting elements from a delimited string.
 http://smallstoneapps.github.io/data-processor/
 
@@ -75,6 +75,12 @@ ProcessingState* data_processor_get_global(void) {
 }
 
 uint8_t data_processor_count(ProcessingState* state) {
+  if (NULL == state) {
+    return 0;
+  }
+  if (strlen(state->data_start) == 0) {
+    return 0;
+  }
   char* pos = state->data_start;
   uint8_t count = 0;
   while (*pos != '\0') {

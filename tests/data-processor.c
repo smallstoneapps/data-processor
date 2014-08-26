@@ -1,6 +1,6 @@
 /*
 
-Data Processor v1.0.1
+Data Processor v1.1
 A Pebble library for extracting elements from a delimited string.
 http://smallstoneapps.github.io/data-processor/
 
@@ -50,7 +50,7 @@ tests/data-processor.c
 // Keep track of how many tests have run, and how many have passed.
 int tests_run = 0;
 int tests_passed = 0;
-const int NUM_TESTS = 15;
+const int NUM_TESTS = 16;
 
 static void before_each(void) {
 }
@@ -207,6 +207,13 @@ static char* test_count_none(void) {
   return 0;
 }
 
+// The count of a NULL state should be 0.
+static char* test_count_null_state(void) {
+  int count = data_processor_count(NULL);
+  mu_assert(0 == count, "Count of NULL state not calculated correctly");
+  return 0;
+}
+
 static char* all_tests() {
   mu_run_test(test_init);
   mu_run_test(test_noinit);
@@ -223,20 +230,23 @@ static char* all_tests() {
   mu_run_test(test_count_single);
   mu_run_test(test_count_multiple);
   mu_run_test(test_count_none);
+  mu_run_test(test_count_null_state);
   return 0;
 }
 
+// Test application entry point.
+// Executes all the tests and prints the results in pretty colours.
 int main(int argc, char **argv) {
-  printf("%s----------------------------\n", KCYN);
-  printf("Running Data Processor Tests\n");
-  printf("----------------------------\n%s", KNRM);
+  printf("%s------------------------------------\n", KCYN);
+  printf("| Running Data Processor %d.%d Tests |\n", DATA_PROCESSOR_VERSION_MAJOR, DATA_PROCESSOR_VERSION_MINOR);
+  printf("------------------------------------\n%s", KNRM);
   char* result = all_tests();
   if (0 != result) {
-    printf("%sFailed Test:%s %s\n", KRED, KNRM, result);
+    printf("%s- Failed Test:%s %s\n", KRED, KNRM, result);
   }
-  printf("Tests Run: %s%d / %d%s\n", (tests_run == NUM_TESTS) ? KGRN : KRED, tests_run, NUM_TESTS, KNRM);
-  printf("Tests Passed: %s%d / %d%s\n", (tests_passed == NUM_TESTS) ? KGRN : KRED, tests_passed, NUM_TESTS, KNRM);
+  printf("- Tests Run: %s%d%s\n", (tests_run == tests_passed) ? KGRN : KRED, tests_run, KNRM);
+  printf("- Tests Passed: %s%d%s\n", (tests_run == tests_passed) ? KGRN : KRED, tests_passed, KNRM);
 
-  printf("%s----------------------------%s\n", KCYN, KNRM);
+  printf("%s------------------------------------%s\n", KCYN, KNRM);
   return result != 0;
 }

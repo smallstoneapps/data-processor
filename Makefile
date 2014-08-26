@@ -1,5 +1,5 @@
 #
-# Data Processor v1.0.1.1
+# Data Processor v1.1
 # A Pebble library for extracting elements from a delimited string.
 # http://smallstoneapps.github.io/data-processor/
 #

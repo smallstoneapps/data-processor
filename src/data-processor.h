@@ -1,6 +1,6 @@
 /*
 
-Data Processor v1.0.1
+Data Processor v1.1
 A Pebble library for extracting elements from a delimited string.
 http://smallstoneapps.github.io/data-processor/
 
@@ -37,6 +37,9 @@ data-processor.h
 #pragma once
 
 #include <pebble.h>
+
+#define DATA_PROCESSOR_VERSION_MAJOR 1
+#define DATA_PROCESSOR_VERSION_MINOR 1
 
 typedef struct ProcessingState ProcessingState;
 
