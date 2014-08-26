@@ -1,8 +1,9 @@
 ---
 title: Data Processor 1.1
+layout: default
 ---
 
-# Data Processor 1.1  [![Build Status](https://travis-ci.org/smallstoneapps/data-processor.png?branch=master)](https://travis-ci.org/smallstoneapps/data-processor)
+# Data Processor 1.1  [![Build Status](https://travis-ci.org/smallstoneapps/data-processor.svg?branch=master)](https://travis-ci.org/smallstoneapps/data-processor/)
 
 Pebble library to extract strings, ints and booleans from a long string of data.
 

@@ -1,0 +1,11 @@
+baseurl:
+url: http://smallstoneapps.github.io/data-processor/
+twitter_username: matthewtole
+github_username: smallstoneapps
+
+markdown: redcarpet
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data"]
+
+highlighter: pygments
+
