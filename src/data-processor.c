@@ -93,6 +93,9 @@ uint8_t data_processor_count(ProcessingState* state) {
 }
 
 char* data_processor_get_string(ProcessingState* state) {
+  if (NULL == state) {
+    return NULL;
+  }
   char* data_block_start = state->data_pos;
   int str_len = 0;
   while (*state->data_pos != state->data_delim && *state->data_pos != '\0') {
@@ -108,6 +111,9 @@ char* data_processor_get_string(ProcessingState* state) {
 }
 
 bool data_processor_get_bool(ProcessingState* state) {
+  if (NULL == state) {
+    return false;
+  }
   char bool_char =  *state->data_pos;
   state->data_pos++;
   state->data_pos++;
@@ -115,6 +121,9 @@ bool data_processor_get_bool(ProcessingState* state) {
 }
 
 int data_processor_get_int(ProcessingState* state) {
+  if (NULL == state) {
+    return -1;
+  }
   char* tmp_str = data_processor_get_string(state);
   int num = atoi(tmp_str);
   free(tmp_str);
