@@ -12,73 +12,19 @@
 
 #define PBL_APP_INFO_SIMPLE PBL_APP_INFO
 
+#include <locale.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdbool.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
 #include "pebble_warn_unsupported_functions.h"
 
 #ifndef __FILE_NAME__
 #define __FILE_NAME__ __FILE__
 #endif
-
-//! Status codes
-typedef enum StatusCode {
-  //! Operation completed successfully.
-  S_SUCCESS = 0,
-
-  //! An error occurred (no description).
-  E_ERROR = -1,
-
-  //! No idea what went wrong.
-  E_UNKNOWN = -2,
-
-  //! There was a generic internal logic error.
-  E_INTERNAL = -3,
-
-  //! The function was not called correctly.
-  E_INVALID_ARGUMENT = -4,
-
-  //! Insufficient allocatable memory available.
-  E_OUT_OF_MEMORY = -5,
-
-  //! Insufficient long-term storage available.
-  E_OUT_OF_STORAGE = -6,
-
-  //! Insufficient resources available.
-  E_OUT_OF_RESOURCES = -7,
-
-  //! Argument out of range (may be dynamic).
-  E_RANGE = -8,
-
-  //! Target of operation does not exist.
-  E_DOES_NOT_EXIST = -9,
-
-  //! Operation not allowed (may depend on state).
-  E_INVALID_OPERATION = -10,
-
-  //! Another operation prevented this one.
-  E_BUSY = -11,
-
-
-  //! Equivalent of boolean true.
-  S_TRUE = 1,
-
-  //! Equivalent of boolean false.
-  S_FALSE = 0,
-
-  //! For list-style requests.  At end of list.
-  S_NO_MORE_ITEMS = 2,
-
-  //! No action was taken as none was required.
-  S_NO_ACTION_REQUIRED = 3,
-
-} StatusCode;
-
-typedef int32_t status_t;
 
 #define ARRAY_LENGTH(array) (sizeof((array))/sizeof((array)[0]))
 
@@ -223,6 +169,71 @@ typedef enum {
 //! @addtogroup Foundation
 //! @{
 
+//! @addtogroup Internationalization
+//! \brief Internationalization & Localization APIs
+//!
+//! @{
+
+//! Get the ISO locale name for the language currently set on the watch
+//! @return A string containing the ISO locale name (e.g. "fr", "en_US", ...)
+//! @note It is possible for the locale to change while your app is running.
+//! And thus, two calls to i18n_get_system_locale may return different values.
+const char *i18n_get_system_locale(void);
+
+//! @} // group Internationalization
+
+//! @addtogroup WatchInfo
+//! \brief Provides information about the watch itself.
+//!
+//! This API provides access to information such as the watch model, watch color
+//! and watch firmware version.
+//! @{
+
+//! The different watch models.
+typedef enum {
+  WATCH_INFO_MODEL_UNKNOWN, //!< Unknown model
+  WATCH_INFO_MODEL_PEBBLE_ORIGINAL, //!< Original Pebble
+  WATCH_INFO_MODEL_PEBBLE_STEEL //!< Pebble Steel
+} WatchInfoModel;
+
+//! The different watch colors.
+typedef enum {
+  WATCH_INFO_COLOR_UNKNOWN = 0, //!< Unknown color
+  WATCH_INFO_COLOR_BLACK = 1, //!< Black
+  WATCH_INFO_COLOR_WHITE = 2, //!< White
+  WATCH_INFO_COLOR_RED = 3, //!< Red
+  WATCH_INFO_COLOR_ORANGE = 4, //!< Orange
+  WATCH_INFO_COLOR_GREY = 5, //!< Grey
+  WATCH_INFO_COLOR_STAINLESS_STEEL = 6, //!< Stainless Steel
+  WATCH_INFO_COLOR_MATTE_BLACK = 7, //!< Matte Black
+  WATCH_INFO_COLOR_BLUE = 8, //!< Blue
+  WATCH_INFO_COLOR_GREEN = 9, //!< Green
+  WATCH_INFO_COLOR_PINK = 10 //!< Pink
+} WatchInfoColor;
+
+//! Data structure containing the version of the firmware running on the watch.
+//! The version of the firmware has the form X.[X.[X]]. If a version number is not present it will be 0.
+//! For example: the version numbers of 2.4.1 are 2, 4, and 1. The version numbers of 2.4 are 2, 4, and 0.
+typedef struct {
+  uint8_t major; //!< Major version number
+  uint8_t minor; //!< Minor version number
+  uint8_t patch; //!< Patch version number
+} WatchInfoVersion;
+
+//! Provides the model of the watch.
+//! @return {@link WatchInfoModel} representing the model of the watch.
+WatchInfoModel watch_info_get_model(void);
+
+//! Provides the version of the firmware running on the watch.
+//! @return {@link WatchInfoVersion} representing the version of the firmware running on the watch.
+WatchInfoVersion watch_info_get_firmware_version(void);
+
+//! Provides the color of the watch.
+//! @return {@link WatchInfoColor} representing the color of the watch.
+WatchInfoColor watch_info_get_color(void);
+
+//! @} // group WatchInfo
+
 //! @addtogroup Math
 //! @{
 
@@ -257,27 +268,19 @@ int32_t atan2_lookup(int16_t y, int16_t x);
 //!
 //! This module contains utilities to get the current time and create strings with formatted
 //! dates and times.
-//! @note When implementing a watchface or application that tells time, make sure to check
-//! out the `tick_info` field of \ref PebbleAppHandlers.
 //! @{
 
-//! Time unit flags that can be used to create a bitmask for use in \ref PebbleAppTickInfo.
-//! @see PebbleAppTickInfo
-//! @see PebbleAppHandlers
+//! Weekday values
 typedef enum {
-  //! Flag to represent the "seconds" time unit
-  SECOND_UNIT = 1 << 0,
-  //! Flag to represent the "minutes" time unit
-  MINUTE_UNIT = 1 << 1,
-  //! Flag to represent the "hours" time unit
-  HOUR_UNIT = 1 << 2,
-  //! Flag to represent the "days" time unit
-  DAY_UNIT = 1 << 3,
-  //! Flag to represent the "months" time unit
-  MONTH_UNIT = 1 << 4,
-  //! Flag to represent the "years" time unit
-  YEAR_UNIT = 1 << 5
-} TimeUnits;
+  TODAY = 0,  //!< Today
+  SUNDAY,     //!< Sunday
+  MONDAY,     //!< Monday
+  TUESDAY,    //!< Tuesday
+  WEDNESDAY,  //!< Wednesday
+  THURSDAY,   //!< Thursday
+  FRIDAY,     //!< Friday
+  SATURDAY,   //!< Saturday
+} WeekDay;
 
 //! Copies a time string into the buffer, formatted according to the user's time display preferences (such as 12h/24h
 //! time).
@@ -291,6 +294,23 @@ void clock_copy_time_string(char *buffer, uint8_t size);
 //! @return `true` if the user prefers 24h-style time display or `false` if the
 //! user prefers 12h-style time display.
 bool clock_is_24h_style(void);
+
+//! Converts a (day, hour, minute) specification to a UTC timestamp occurring in the future
+//! Always returns a timestamp for the next occurring instance,
+//! example: specifying TODAY@14:30 when it is 14:40 will return a timestamp for 7 days from
+//! now at 14:30
+//! @note This function does not support Daylight Saving Time (DST) changes, events scheduled
+//! during a DST change will be off by an hour.
+//! @param day WeekDay day of week including support for specifying TODAY
+//! @param hour hour specified in 24-hour format [0-23]
+//! @param minute minute [0-59]
+time_t clock_to_timestamp(WeekDay day, int hour, int minute);
+
+//! Checks if timezone is currently set, otherwise gmtime == localtime.
+//! @note This function was added in preparation of timezone support, 
+//! currently always returns false
+//! @return `true` if timezone has been set, false otherwise
+bool clock_is_timezone_set(void);
 
 //! @} // group WallTime
 
@@ -389,7 +409,7 @@ void battery_state_service_subscribe(BatteryStateHandler handler);
 void battery_state_service_unsubscribe(void);
 
 //! Peek at the last known battery state.
-//! @return a \ref BatterChargeState containing the last known data
+//! @return a \ref BatteryChargeState containing the last known data
 BatteryChargeState battery_state_service_peek(void);
 
 //! @} // group BatteryStateService
@@ -423,6 +443,16 @@ typedef struct __attribute__((__packed__)) AccelData {
   uint64_t timestamp;
 } AccelData;
 
+//! A single accelerometer sample for all three axes
+typedef struct __attribute__((__packed__)) {
+  //! acceleration along the x axis
+  int16_t x;
+  //! acceleration along the y axis
+  int16_t y;
+  //! acceleration along the z axis
+  int16_t z;
+} AccelRawData;
+
 typedef enum {
   //! Accelerometer's X axis. The positive direction along the X axis goes
   //! toward the right of the watch.
@@ -439,6 +469,12 @@ typedef enum {
 //! @param data Pointer to the collected accelerometer samples.
 //! @param num_samples the number of samples stored in data.
 typedef void (*AccelDataHandler)(AccelData *data, uint32_t num_samples);
+
+//! Callback type for accelerometer raw data events
+//! @param data Pointer to the collected accelerometer samples.
+//! @param num_samples the number of samples stored in data.
+//! @param timestamp the timestamp, in ms, of the first sample.
+typedef void (*AccelRawDataHandler)(AccelRawData *data, uint32_t num_samples, uint64_t timestamp);
 
 //! Callback type for accelerometer tap events
 //! @param axis the axis on which a tap was registered (x, y, or z)
@@ -492,15 +528,178 @@ void accel_tap_service_subscribe(AccelTapHandler handler);
 //! the previously registered handler will no longer be called.
 void accel_tap_service_unsubscribe(void);
 
+//! Subscribe to the accelerometer raw data event service. Once subscribed, the handler
+//! gets called every time there are new accelerometer samples available.
+//! @note Cannot use \ref accel_service_peek() when subscribed to accelerometer data events.
+//! @param handler A callback to be executed on accelerometer data events
+//! @param samples_per_update the number of samples to buffer, between 0 and 25.
+void accel_raw_data_service_subscribe(uint32_t samples_per_update, AccelRawDataHandler handler);
+
 //! @} // group AccelerometerService
+
+//! @addtogroup CompassService
+//!
+//! \brief The Compass Service combines information from Pebble's accelerometer and magnetometer to automatically calibrate
+//! the compass and transform the raw magnetic field information into a \ref CompassHeading, that is an angle to north.
+//!
+//! The Compass Service provides magnetic north and information about its status and accuracy through the \ref
+//! CompassHeadingData structure. The API is designed to also provide true north in a future release.
+//!
+//! #### Calibration
+//! The Compass Service requires an initial calibration before it can return accurate results. Calibration is
+//! performed automatically by the system when required.
+//! The `compass_status` field indicates whether the Compass Service is calibrating.
+//! To help the calibration process, your application should
+//! show a message to the user asking them to move their wrists in different directions.
+//!
+//! Refer to the compass examples for suggestions on how to implement this screen.
+//!
+//! #### Magnetic North and True North
+//!
+//! Depending on your location on earth, the measured heading towards magnetic north and
+//! true north can significantly differ. This is called magnetic variation or declination.
+//!
+//! Pebble does not currently automatically correct the magnetic heading to return a true heading, but the API is designed so that
+//! this feature can be added in the future and your applications will be able to automatically take advantage of it:
+//!
+//!  * If you need a precise heading in your application, we recommend that you use the `magnetic_heading` field and
+//! use a webservice to retrieve the declination at your current location.
+//!
+//!  * If you choose to not correct the heading yourself, we recommend that you use the `true_heading` field. This field will contain
+//! the magnetic heading if declination is not available, or the true heading if declination is available. The field
+//! `is_declination_valid` will be true when declination is available. You can use this information to tell the user whether
+//! you are showing magnetic north or true north.
+//!
+//! #### Battery Considerations
+//! Using the compass will turn on both Pebble's magnetometer and accelerometer. Those two devices will have a slight
+//! impact on battery life. A much more significant battery impact will be caused by redrawing the screen too often or
+//! performing CPU-intensive work every time the compass heading is updated.
+//!
+//! We recommend that you follow the following best practices to optimize for battery life:
+//!
+//! * If your application is already rapidly redrawing the display, use \ref compass_service_peek() to get the most recent
+//! available heading when drawing each frame.
+//! * If your UI updates only when the heading changes, use \ref compass_service_subscribe() and set an appropriate filter to reduce
+//! the number of events.
+//! * If you use \ref compass_service_subscribe() and then do not require the compass heading anymore, remember to call
+//! \ref compass_service_unsubscribe() to stop the Compass Service.
+//! * Finally, note that every time you use \ref compass_service_peek(), the Compass Service will turn on and stay
+//! active for a few seconds.
+//!
+//! #### Defining "up" on Pebble
+//! Compass readings are always relative to the current orientation of Pebble. Using the accelerometer, the
+//! Compass Service figures out what is the direction that the user is pointing at.
+//!
+//! If Pebble is held flat, the compass heading will be the angle between a vector to north and a vector going
+//! from the bottom to the top of Pebble in a plane parallel to the screen (the Y axis vector of the accelerometer).
+//! If the user lifts their arm so that Pebble is held vertical in front of them, compass heading will be relative to a vector
+//! going through Pebble (opposite to the Z axis vector of the accelerometer). If the user keeps bringing their arm up,
+//! effectively holding the Pebble upside down, the compass heading will be relative to a line from the top to the
+//! bottom of Pebble, in the plane of the screen (opposite to the Y axis vector of the accelerometer).
+//!
+//! #### Code Samples
+//! For available code samples, see `Examples/watchapps/feature_compass`.
+//! @{
+
+//! Converts from a fixed point value representation of trig_angle to the equivalent value in degrees
+#define TRIGANGLE_TO_DEG(trig_angle) (((trig_angle) * 360) / TRIG_MAX_ANGLE)
+
+
+typedef struct __attribute__((__packed__)) {
+ //! magnetic field along the x axis
+ int16_t x;
+ //! magnetic field along the y axis
+ int16_t y;
+ //! magnetic field along the z axis
+ int16_t z;
+} MagData;
+
+//! Enum describing the current state of the Compass Service calibration
+typedef enum {
+  //! Compass is calibrating: data is invalid and should not be used
+  CompassStatusDataInvalid = 0,
+  //! Compass is calibrating: the data is valid but the calibration is still being refined
+  CompassStatusCalibrating,
+  //! Compass data is valid and the calibration has completed
+  CompassStatusCalibrated
+} CompassStatus;
+
+//! Represents an angle relative to a reference direction, e.g. (magnetic) north.
+//! The angle value is scaled linearly, such that a value of TRIG_MAX_ANGLE corresponds to 360 degrees or 2 PI radians.
+//! Thus, if heading towards north, north is 0, east is TRIG_MAX_ANGLE/4, south is TRIG_MAX_ANGLE/2, and so on.
+typedef int32_t CompassHeading;
+
+//! Structure containing a single heading towards magnetic and true north.
+typedef struct {
+  //! measured angle relative to magnetic north
+  CompassHeading magnetic_heading;
+  //! measured angle relative to true north (or to magnetic north if declination
+  //! is invalid)
+  CompassHeading true_heading;
+  //! indicates the current state of the Compass Service calibration
+  CompassStatus compass_status;
+  //! true, if the current declination is known and applied to `true_heading`, false otherwise
+  bool is_declination_valid;
+} CompassHeadingData;
+
+//! Callback type for compass heading events
+//! @param heading copy of last recorded heading
+typedef void (*CompassHeadingHandler)(CompassHeadingData heading);
+
+//! Set the minimum angular change required to generate new compass heading events.
+//! The angular distance is measured relative to the last delivered heading event.
+//! Use 0 to be notified of all movements.
+//! Negative values and values > TRIG_MAX_ANGLE / 2 are not valid.
+//! The default value of this property is TRIG_MAX_ANGLE / 360.
+//! @return 0, success.
+//! @return Non-Zero, if filter is invalid.
+//! @see compass_service_subscribe
+int compass_service_set_heading_filter(CompassHeading filter);
+
+//! Subscribe to the compass heading event service. Once subscribed, the handler
+//! gets called every time the angular distance relative to the previous value
+//! exceeds the configured filter.
+//! @param handler A callback to be executed on heading events
+//! @see compass_service_set_heading_filter
+//! @see compass_service_unsubscribe
+void compass_service_subscribe(CompassHeadingHandler handler);
+
+//! Unsubscribe from the compass heading event service. Once unsubscribed,
+//! the previously registered handler will no longer be called.
+//! @see compass_service_subscribe
+void compass_service_unsubscribe(void);
+
+//! Peek at the last recorded reading.
+//! @param[out] data a pointer to a pre-allocated CompassHeadingData
+//! @return Always returns 0 to indicate success.
+int compass_service_peek(CompassHeadingData *data);
+
+//! @} // group CompassService
 
 //! @addtogroup TickTimerService
 //! \brief Handling time components
 //!
 //! The TickTimerService allows your app to be called every time one Time component has changed.
 //! This is extremely important for watchfaces. Your app can choose on which time component
-//! change a tick should occur. Time components are defined by the TimeUnits enum in pebble.h.
+//! change a tick should occur. Time components are defined by a \ref TimeUnits enum bitmask.
 //! @{
+
+//! Time unit flags that can be used to create a bitmask for use in \ref tick_timer_service_subscribe().
+//! This will also be passed to \ref TickHandler.
+typedef enum {
+  //! Flag to represent the "seconds" time unit
+  SECOND_UNIT = 1 << 0,
+  //! Flag to represent the "minutes" time unit
+  MINUTE_UNIT = 1 << 1,
+  //! Flag to represent the "hours" time unit
+  HOUR_UNIT = 1 << 2,
+  //! Flag to represent the "days" time unit
+  DAY_UNIT = 1 << 3,
+  //! Flag to represent the "months" time unit
+  MONTH_UNIT = 1 << 4,
+  //! Flag to represent the "years" time unit
+  YEAR_UNIT = 1 << 5
+} TimeUnits;
 
 //! Callback type for tick timer events
 //! @param tick_time the time at which the tick event was triggered
@@ -512,7 +711,7 @@ typedef void (*TickHandler)(struct tm *tick_time, TimeUnits units_changed);
 //! Calling this function multiple times will override the units and handler (i.e., only 
 //! the last tick_units and handler passed will be used).
 //! @param handler The callback to be executed on tick events
-//! @param tick_units the unit change we want to handle (seconds, minutes, hours)
+//! @param tick_units a bitmask of all the units that have changed
 void tick_timer_service_subscribe(TimeUnits tick_units, TickHandler handler);
 
 //! Unsubscribe from the tick timer event service. Once unsubscribed, the previously registered
@@ -624,6 +823,66 @@ data_logging_log(DataLoggingSessionRef logging_session, const void *data, uint32
 
 //! @} // group DataLogging
 
+//! @addtogroup DataStructures
+//! @{
+
+//! @addtogroup UUID
+//! @{
+
+typedef struct __attribute__((__packed__)) {
+  uint8_t byte0;
+  uint8_t byte1;
+  uint8_t byte2;
+  uint8_t byte3;
+  uint8_t byte4;
+  uint8_t byte5;
+  uint8_t byte6;
+  uint8_t byte7;
+  uint8_t byte8;
+  uint8_t byte9;
+  uint8_t byte10;
+  uint8_t byte11;
+  uint8_t byte12;
+  uint8_t byte13;
+  uint8_t byte14;
+  uint8_t byte15;
+} Uuid;
+
+#define UUID_SIZE 16
+
+#define UuidMake(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15) ((Uuid) {p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15})
+
+//! Creates a Uuid from an array of bytes with 16 bytes in Big Endian order.
+//! @return The created Uuid
+#define UuidMakeFromBEBytes(b) ((Uuid) { b[0], b[1], b[2], b[3], \
+                                         b[4], b[5], b[6], b[7], \
+                                         b[8], b[9], b[10], b[11], \
+                                         b[12], b[13], b[14], b[15] })
+
+//! Creates a Uuid from an array of bytes with 16 bytes in Little Endian order.
+//! @return The created Uuid
+#define UuidMakeFromLEBytes(b) ((Uuid) { b[15], b[14], b[13], b[12], \
+                                         b[11], b[10], b[9], b[8], \
+                                         b[7], b[6], b[5], b[4], \
+                                         b[3], b[2], b[1], b[0] })
+
+//! Compares two UUIDs.
+//! @return True if the two UUIDs are equal, false if they are not.
+bool uuid_equal(const Uuid *uu1, const Uuid *uu2);
+
+//! Writes UUID in a string form into buffer that looks like the following...
+//! {12345678-1234-5678-1234-567812345678}
+//! @param uuid The Uuid to write
+//! @param buffer Memory to write the string to. Must be at least \ref UUID_STRING_BUFFER_LENGTH bytes long.
+void uuid_to_string(const Uuid *uuid, char *buffer);
+
+//! The minimum required length of a string used to hold a uuid (including null).
+#define UUID_STRING_BUFFER_LENGTH (32 + 4 + 2 + 1)
+
+//! @} // group UUID
+
+//! @} // group DataStructures
+
 //! @addtogroup Logging Logging
 //!   \brief Functions related to logging from apps.
 //!
@@ -637,16 +896,20 @@ data_logging_log(DataLoggingSessionRef logging_session, const void *data, uint32
 //! @{
 
 //! Log an app message.
-//! Refer the <a class="el" href="http://linux.die.net/man/3/snprintf">snprintf manpage</a> for details about the C formatting string format.
 //! @param log_level
 //! @param src_filename The source file where the log originates from
 //! @param src_line_number The line number in the source file where the log originates from
 //! @param fmt A C formatting string
 //! @param ... The arguments for the formatting string
-//! \note We do not have floating point number support in formatting strings
+//! @param log_level
+//! \sa snprintf for details about the C formatting string.
 void app_log(uint8_t log_level, const char* src_filename, int src_line_number, const char* fmt, ...)
     __attribute__((format(printf, 4, 5)));
 
+//! A helper macro that simplifies the use of the app_log function
+//! @param level The log level to log output as
+//! @param fmt A C formatting string
+//! @param args The arguments for the formatting string
 #define APP_LOG(level, fmt, args...)                                \
   app_log(level, __FILE_NAME__, __LINE__, fmt, ## args)
 
@@ -994,12 +1257,22 @@ typedef struct Tuplet {
   }; //!< See documentation of `.bytes`, `.cstring` and `.integer` fields.
 } Tuplet;
 
+//! Macro to create a Tuplet with a byte array value
+//! @param _key The key
+//! @param _data Pointer to the bytes
+//! @param _length Length of the buffer
 #define TupletBytes(_key, _data, _length) \
 ((const Tuplet) { .type = TUPLE_BYTE_ARRAY, .key = _key, .bytes = { .data = _data, .length = _length }})
 
+//! Macro to create a Tuplet with a c-string value
+//! @param _key The key
+//! @param _cstring The c-string value
 #define TupletCString(_key, _cstring) \
 ((const Tuplet) { .type = TUPLE_CSTRING, .key = _key, .cstring = { .data = _cstring, .length = _cstring ? strlen(_cstring) + 1 : 0 }})
 
+//! Macro to create a Tuplet with an integer value
+//! @param _key The key
+//! @param _integer The integer value
 #define TupletInteger(_key, _integer) \
 ((const Tuplet) { .type = IS_SIGNED(_integer) ? TUPLE_INT : TUPLE_UINT, .key = _key, .integer = { .storage = _integer, .width = sizeof(_integer) }})
 
@@ -1574,13 +1847,19 @@ const Tuple * app_sync_get(const struct AppSync *s, const uint32_t key);
 
 //! Opaque reference to a resource.
 //! @see \ref resource_get_handle()
-typedef const void* ResHandle;
+typedef void * ResHandle;
+
+#define RESOURCE_ID_FONT_FALLBACK RESOURCE_ID_GOTHIC_14
 
 //! Gets the resource handle for a file identifier.
-//! @param file_id The resource ID
+//! @param resource_id The resource ID
+//!
 //! The resource IDs are auto-generated by the Pebble build process, based
-//! on the `applib.json`. For example, given the following fragment of a
-//! `applib.json`:
+//! on the `appinfo.json`. The "name" field of each resource is prefixed
+//! by `RESOURCE_ID_` and made visible to the application (through the
+//! `build/src/resource_ids.auto.h` header which is automatically included).
+//!
+//! For example, given the following fragment of `appinfo.json`:
 //! \code{.json}
 //!   ...
 //!   "resources" : {
@@ -1591,11 +1870,9 @@ typedef const void* ResHandle;
 //!           "type": "png",
 //!        },
 //!    ...
-//!
 //! \endcode
-//! The "name" value gets prefixed by `RESOURCE_ID_` by the Pebble build
-//! process. So, in the example `RESOURCE_ID_MY_ICON` is the file identifier
-//! for that resource. To get a resource handle for that resource write:
+//! The generated file identifier for this resource is `RESOURCE_ID_MY_ICON`.
+//! To get a resource handle for that resource write:
 //! \code{.c}
 //! ResHandle rh = resource_get_handle(RESOURCE_ID_MY_ICON);
 //! \endcode
@@ -1616,7 +1893,7 @@ size_t resource_load(ResHandle h, uint8_t *buffer, size_t max_length);
 //! Copies a range of bytes from a resource with a given handle into a given buffer.
 //! @param h The handle to the resource
 //! @param start_offset The offset in bytes at which to start reading from the resource
-//! @param data The buffer to load the resource data into
+//! @param buffer The buffer to load the resource data into
 //! @param num_bytes The maximum number of bytes to copy
 //! @return The number of bytes actually copied
 size_t resource_load_byte_range(
@@ -1632,6 +1909,73 @@ size_t resource_load_byte_range(
 void app_event_loop(void);
 
 //! @} // group App
+
+//! @addtogroup AppWorker
+//!
+//! \brief Managing the app worker
+//!
+//! This modules contains functions for and managing the worker task, querying its status, and communicating with it
+//!
+//! @{
+
+//! Possible error codes from app_worker_launch, app_worker_kill
+typedef enum {
+  //! Success
+  APP_WORKER_RESULT_SUCCESS= 0,
+  //! No worker found for the current app
+  APP_WORKER_RESULT_NO_WORKER = 1,
+  //! A worker for a different app is already running
+  APP_WORKER_RESULT_DIFFERENT_APP = 2,
+  //! The worker is not running
+  APP_WORKER_RESULT_NOT_RUNNING = 3,
+  //! The worker is already running
+  APP_WORKER_RESULT_ALREADY_RUNNING = 4,
+  //! The user will be asked for confirmation
+  APP_WORKER_RESULT_ASKING_CONFIRMATION = 5,
+} AppWorkerResult;
+
+//! Generic structure of a worker message that can be sent between an app and its worker
+typedef struct {
+  uint16_t data0;
+  uint16_t data1;
+  uint16_t data2;
+} AppWorkerMessage;
+
+//! Determine if the worker for the current app is running
+//! @return true if running
+bool app_worker_is_running(void);
+
+//! Launch the worker for the current app. Note that this is an asynchronous operation, a result code
+//! of APP_WORKER_RESULT_SUCCESS merely means that the request was successfully queued up.
+//! @return result code
+AppWorkerResult app_worker_launch(void);
+
+//! Kill the worker for the current app. Note that this is an asynchronous operation, a result code
+//! of APP_WORKER_RESULT_SUCCESS merely means that the request was successfully queued up.
+//! @return result code
+AppWorkerResult app_worker_kill(void);
+
+//! Callback type for worker messages. Messages can be sent from worker to app or vice versa.
+//! @param type An application defined message type
+//! @param data pointer to message data. The receiver must know the structure of the data provided by the sender.
+typedef void (*AppWorkerMessageHandler)(uint16_t type, AppWorkerMessage *data);
+
+//! Subscribe to worker messages. Once subscribed, the handler gets called on every message emitted by the other task
+//! (either worker or app).
+//! @param handler A callback to be executed when the event is received
+//! @return true on success
+bool app_worker_message_subscribe(AppWorkerMessageHandler handler);
+
+//! Unsubscribe from worker messages. Once unsubscribed, the previously registered handler will no longer be called.
+//! @return true on success
+bool app_worker_message_unsubscribe(void);
+
+//! Send a message to the other task (either worker or app).
+//! @param type An application defined message type
+//! @param data the message data structure
+void app_worker_send_message(uint8_t type, AppWorkerMessage *data);
+
+//! @} // group AppWorker
 
 //! @addtogroup AppComm App Communication
 //!   \brief API for interacting with the Pebble communication subsystem.
@@ -1704,6 +2048,21 @@ void app_timer_cancel(AppTimer *timer_handle);
 
 //! @} // group Timer
 
+//! @addtogroup MemoryManagement Memory Management
+//!   \brief Utility functions for determining an application's memory usage.
+//!
+//! @{
+
+//! Calculates the number of bytes of heap memory \a not currently being used by the application.
+//! @return The number of bytes on the heap not currently being used.
+size_t heap_bytes_free(void);
+
+//! Calculates the number of bytes of heap memory currently being used by the application.
+//! @return The number of bytes on the heap currently being used.
+size_t heap_bytes_used(void);
+
+//! @} // group MemoryManagement
+
 //! @addtogroup Storage
 //! \brief A mechanism to store persistent application data and state
 //!
@@ -1732,6 +2091,61 @@ void app_timer_cancel(AppTimer *timer_handle);
 
 //! The maximum size of a persist string in bytes including the NULL terminator
 #define PERSIST_STRING_MAX_LENGTH PERSIST_DATA_MAX_LENGTH
+
+//! Status codes. See \ref status_t
+typedef enum StatusCode {
+  //! Operation completed successfully.
+  S_SUCCESS = 0,
+
+  //! An error occurred (no description).
+  E_ERROR = -1,
+
+  //! No idea what went wrong.
+  E_UNKNOWN = -2,
+
+  //! There was a generic internal logic error.
+  E_INTERNAL = -3,
+
+  //! The function was not called correctly.
+  E_INVALID_ARGUMENT = -4,
+
+  //! Insufficient allocatable memory available.
+  E_OUT_OF_MEMORY = -5,
+
+  //! Insufficient long-term storage available.
+  E_OUT_OF_STORAGE = -6,
+
+  //! Insufficient resources available.
+  E_OUT_OF_RESOURCES = -7,
+
+  //! Argument out of range (may be dynamic).
+  E_RANGE = -8,
+
+  //! Target of operation does not exist.
+  E_DOES_NOT_EXIST = -9,
+
+  //! Operation not allowed (may depend on state).
+  E_INVALID_OPERATION = -10,
+
+  //! Another operation prevented this one.
+  E_BUSY = -11,
+
+  //! Equivalent of boolean true.
+  S_TRUE = 1,
+
+  //! Equivalent of boolean false.
+  S_FALSE = 0,
+
+  //! For list-style requests.  At end of list.
+  S_NO_MORE_ITEMS = 2,
+
+  //! No action was taken as none was required.
+  S_NO_ACTION_REQUIRED = 3,
+
+} StatusCode;
+
+//! Return value for system operations. See \ref StatusCode for possible values.
+typedef int32_t status_t;
 
 //! Checks whether a value has been set for a given key in persistent storage.
 //! @param key The key of the field to check.
@@ -1808,6 +2222,97 @@ status_t persist_delete(const uint32_t key);
 
 //! @} // group Storage
 
+//! @addtogroup Wakeup
+//!   \brief The wakeup API allows applications to schedule for a wakeup event.
+//!   Wakeup events launch applications at a specified time if they are not running,
+//!   and calls the WakeupHandler callback if the application has subscribed to the service.
+//!   @note The WakeupHander callback will occur only for applications that have subscribed 
+//!   a wakeup handler and are running when a wakeup event occurs.
+//!   \ref clock_to_timestamp is provided to simplify wakeup event scheduling.
+//!
+//! @{
+
+//! WakeupId is an identifier for a wakeup event
+typedef int32_t WakeupId;
+
+//! The type of function which can be called when a wakeup event occurs.  
+//! The arguments will be the id of the wakeup event that occurred, 
+//! as well as the scheduled cookie provided to \ref app_wakeup_schedule.
+typedef void (*WakeupHandler)(WakeupId wakeup_id, int32_t cookie);
+
+//! Registers a WakeupHandler to be called when wakeup events occur.
+//! @param handler The callback that gets called when the wakeup event occurs
+void wakeup_service_subscribe(WakeupHandler handler);
+
+//! Registers a wakeup event that triggers a callback at the specified time.
+//! Applications may only schedule up to 8 wakeup events.
+//! Wakeup events are given a 1 minute duration window, in that no application may schedule a 
+//! wakeup event with 1 minute of a currently scheduled wakeup event.
+//! @param timestamp The requested time (UTC) for the wakeup event to occur
+//! @param cookie The application specific reason for the wakeup event
+//! @param notify_if_missed On powering on Pebble, will alert user when 
+//! notifications were missed due to Pebble being off.
+//! @return negative values indicate errors (StatusCode)
+//! E_RANGE if the event cannot be scheduled due to another event in that period.
+//! E_INVALID_ARGUMENT if the time requested is in the past.
+//! E_OUT_OF_RESOURCES if the application has already scheduled all 8 wakeup events.
+//! E_INTERNAL if a system error occurred during scheduling.
+WakeupId wakeup_schedule(time_t timestamp, int32_t cookie, bool notify_if_missed);
+
+//! Cancels a wakeup event.
+//! @param wakeup_id Wakeup event to cancel
+void wakeup_cancel(WakeupId wakeup_id);
+
+//! Cancels all wakeup event for the app.
+void wakeup_cancel_all(void);
+
+//! Retrieves the wakeup event info for an app that was launched
+//! by a wakeup_event (ie. \ref launch_reason() === APP_LAUNCH_WAKEUP)
+//! so that an app may display information regarding the wakeup event
+//! @param wakeup_id WakeupId for the wakeup event that caused the app to wakeup
+//! @param cookie App provided reason for the wakeup event
+//! @return True if app was launched due to a wakeup event, false otherwise
+bool wakeup_get_launch_event(WakeupId *wakeup_id, int32_t *cookie);
+
+//! Checks if the current WakeupId is still scheduled and therefore valid,
+//! @param wakeup_id Wakeup event to query for validity and scheduled time
+//! @param timestamp Time (in UTC, but local time when \ref clock_is_timezone_set
+//! returns false) that the wakeup event is scheduled to occur
+//! @return True if WakeupId is still scheduled, false if it doesn't exist or has
+//! already occurred
+bool wakeup_query(WakeupId wakeup_id, time_t *timestamp);
+
+//! @} // group Wakeup
+
+//! @addtogroup LaunchReason Launch Reason
+//!   \brief API for checking what caused the application to launch.
+//!
+//!   This includes the system, launch by user interaction (User selects the
+//!   application from the launcher menu),
+//!   launch by the mobile or a mobile companion application,
+//!   or launch by a scheduled wakeup event for the specified application.
+//!
+//! @{
+
+//! AppLaunchReason is used to inform the application about how it was launched
+//! @note New launch reasons may be added in the future. As a best practice, it
+//! is recommended to only handle the cases that the app needs to know about,
+//! rather than trying to handle all possible launch reasons.
+typedef enum {
+  APP_LAUNCH_SYSTEM = 0,  //!< App launched by the system
+  APP_LAUNCH_USER,        //!< App launched by user selection in launcher menu
+  APP_LAUNCH_PHONE,       //!< App launched by mobile or companion app
+  APP_LAUNCH_WAKEUP,      //!< App launched by wakeup event
+  APP_LAUNCH_WORKER,      //!< App launched by worker calling worker_launch_app()
+  APP_LAUNCH_QUICK_LAUNCH, //!< App launched by user using quick launch
+} AppLaunchReason;
+
+//! Provides the method used to launch the current application.
+//! @return The method or reason the current application was launched
+AppLaunchReason launch_reason(void);
+
+//! @} // group LaunchReason
+
 //! @} // group Foundation
 
 //! @addtogroup Graphics
@@ -1838,6 +2343,7 @@ typedef struct GPoint {
   int16_t y;
 } GPoint;
 
+//! Convenience macro to make a GPoint.
 #define GPoint(x, y) ((GPoint){(x), (y)})
 
 //! Convenience macro to make a GPoint at (0, 0).
@@ -1857,6 +2363,7 @@ typedef struct GSize {
   int16_t h;
 } GSize;
 
+//! Convenience macro to make a GSize.
 #define GSize(w, h) ((GSize){(w), (h)})
 
 //! Convenience macro to make a GSize of (0, 0).
@@ -1877,6 +2384,7 @@ typedef struct GRect {
   GSize size;
 } GRect;
 
+//! Convenience macro to make a GRect
 #define GRect(x, y, w, h) ((GRect){{(x), (y)}, {(w), (h)}})
 
 //! Convenience macro to make a GRect of ((0, 0), (0, 0)).
@@ -1965,7 +2473,7 @@ typedef struct __attribute__ ((__packed__)) GBitmap {
   //! Also, the following should (naturally) be true: `(row_size_bytes * 8 >= bounds.w)`
   uint16_t row_size_bytes;
 
-  //! This union is here to make it easy to copy in a full uint16_t of flags from the binary format
+  //! Private attributes used by the system.
   union {
     //! Bitfields of metadata flags.
     uint16_t info_flags;
@@ -1986,17 +2494,23 @@ typedef struct __attribute__ ((__packed__)) GBitmap {
 } GBitmap;
 
 //! Creates a new \ref GBitmap on the heap using a Pebble image file stored as a resource.
-//! The resulting GBitmap must be destroyed using gbitmap_destroy.
+//! The resulting GBitmap must be destroyed using \ref gbitmap_destroy().
 //! @param resource_id The ID of the bitmap resource to load
 //! @return A pointer to the \ref GBitmap. `NULL` if the GBitmap could not
 //! be created
 GBitmap* gbitmap_create_with_resource(uint32_t resource_id);
 
-//! Creates a new GBitmap on the heap initialized with a Pebble image file data
-//! (.pbi), as output by bitmapgen.py.
-//! @param data The Pebble image file data. Must not be NULL. The function
+//! Creates a new GBitmap on the heap initialized with the provided Pebble image data.
+//!
+//! The resulting \ref GBitmap must be destroyed using \ref gbitmap_destroy() but the image
+//! data will not be freed automatically. The developer is responsible for keeping the image
+//! data in memory as long as the bitmap is used and releasing it after the bitmap is destroyed.
+//! @note One way to generate Pebble image data is to use bitmapgen.py in the Pebble
+//! SDK to generate a .pbi file.
+//! @param data The Pebble image data. Must not be NULL. The function
 //! assumes the data to be correct; there are no sanity checks performed on the
-//! data.
+//! data. The data will not be copied and the pointer must remain valid for the
+//! lifetime of this GBitmap.
 //! @return A pointer to the \ref GBitmap. `NULL` if the \ref GBitmap could not
 //! be created
 GBitmap* gbitmap_create_with_data(const uint8_t *data);
@@ -2008,6 +2522,7 @@ GBitmap* gbitmap_create_with_data(const uint8_t *data);
 //! is responsible for making sure the base bitmap will remain available when
 //! using the sub-bitmap. Note that you should not destroy the parent bitmap until
 //! the sub_bitmap has been destroyed.
+//! The resulting \ref GBitmap must be destroyed using \ref gbitmap_destroy().
 //! @param[in] base_bitmap The bitmap that the sub-bitmap of which the image data
 //! will be used by the sub-bitmap
 //! @param sub_rect The rectangle within the image data of the base bitmap. The
@@ -2017,14 +2532,20 @@ GBitmap* gbitmap_create_with_data(const uint8_t *data);
 GBitmap* gbitmap_create_as_sub_bitmap(const GBitmap *base_bitmap, GRect sub_rect);
 
 //! Creates a new blank GBitmap on the heap initialized to zeroes.
+//! The resulting \ref GBitmap must be destroyed using \ref gbitmap_destroy().
 //! @param size The Pebble image dimensions as a \ref GSize.
 //! @return A pointer to the \ref GBitmap. `NULL` if the \ref GBitmap could not
 //! be created
 GBitmap* gbitmap_create_blank(GSize size);
 
-//! Destroy a \ref GBitmap; free the \ref GBitmap's data if it is dynamically
-//! allocated.
+//! Destroy a \ref GBitmap.
 //! This must be called for every bitmap that's been created with gbitmap_create_*
+//!
+//! This function will also free the memory of the bitmap data (bitmap->addr) if the bitmap was created with \ref gbitmap_create_blank()
+//! or \ref gbitmap_create_with_resource().
+//!
+//! If the GBitmap was created with \ref gbitmap_create_with_data(), you must release the memory
+//! after calling gbitmap_destroy().
 void gbitmap_destroy(GBitmap* bitmap);
 
 //! Values to specify how two things should be aligned relative to each other.
@@ -2128,14 +2649,14 @@ typedef struct GContext GContext;
 //! The Pebble OS graphics engine, inspired by several notable graphics systems, including
 //! Apple’s Quartz 2D and its predecessor QuickDraw, provides your app with a canvas into
 //! which to draw, namely, the graphics context. A graphics context is the target into which
-//! graphics functions can paint, using Pebble drawing routines (see \ref \ref Drawing,
+//! graphics functions can paint, using Pebble drawing routines (see \ref Drawing,
 //! \ref PathDrawing and \ref TextDrawing).
 //!
 //! A graphics context holds a reference to the bitmap into which to paint. It also holds the
 //! current drawing state, like the current fill color, stroke color, clipping box, drawing box,
-//! compositing mode, and so on. The \ref GContext struct is the type representing the graphics context.
+//! compositing mode, and so on. The GContext struct is the type representing the graphics context.
 //!
-//! For drawing in your Pebble watchface or watchapp, you won't need to create a \ref GContext
+//! For drawing in your Pebble watchface or watchapp, you won't need to create a GContext
 //! yourself. In most cases, it is provided by Pebble OS as an argument passed into a render
 //! callback (the .update_proc of a Layer).
 //!
@@ -2275,6 +2796,36 @@ void graphics_draw_round_rect(GContext* ctx, GRect rect, uint16_t radius);
 //! @see GContext
 void graphics_draw_bitmap_in_rect(GContext* ctx, const GBitmap *bitmap, GRect rect);
 
+//! Captures the frame buffer for direct access.
+//! Graphics functions will not affect the frame buffer while it is captured.
+//! The frame buffer is released when {@link graphics_release_frame_buffer} is called.
+//! The frame buffer must be released before the end of a layer's `.update_proc`
+//! for the layer to be drawn properly.
+//!
+//! While the frame buffer is captured calling {@link graphics_capture_frame_buffer}
+//! will fail and return `NULL`.
+//! @see GBitmap
+//! @param ctx The graphics context providing the frame buffer
+//! @return A pointer to the frame buffer. `NULL` if failed.
+GBitmap* graphics_capture_frame_buffer(GContext* ctx);
+
+//! Releases the frame buffer.
+//! Must be called before the end of a layer's `.update_proc` for the layer to be drawn properly.
+//!
+//! If `buffer` does not point to the address previously returned by
+//! {@link graphics_capture_frame_buffer} the frame buffer will not be released.
+//! @param ctx The graphics context providing the frame buffer
+//! @param buffer The pointer to frame buffer
+//! @return True if the frame buffer was released successfully
+bool graphics_release_frame_buffer(GContext* ctx, GBitmap* buffer);
+
+//! Whether or not the frame buffer has been captured by {@link graphics_capture_frame_buffer}.
+//! Graphics functions will not affect the frame buffer until it has been released by
+//! {@link graphics_release_frame_buffer}.
+//! @param ctx The graphics context providing the frame buffer
+//! @return True if the frame buffer has been captured
+bool graphics_frame_buffer_is_captured(GContext* ctx);
+
 //! @} // group Drawing
 
 //! @addtogroup PathDrawing Drawing Paths
@@ -2413,7 +2964,7 @@ GFont fonts_get_system_font(const char *font_key);
 //! (fallback) font if the specified font cannot be loaded.
 //! @see \htmlinclude UsingResources.html on how to embed a font into your app.
 //! @note this may load a font from the flash peripheral into RAM.
-GFont fonts_load_custom_font(ResHandle resource);
+GFont fonts_load_custom_font(ResHandle handle);
 
 //! Unloads the specified custom font and frees the memory that is occupied by
 //! it.
@@ -2916,6 +3467,7 @@ bool window_is_loaded(Window *window);
 //! provide a means to access the data at later times in one of the window event handlers.
 //! @see window_get_user_data
 //! @param window The window for which to set the user data
+//! @param data A pointer to user data.
 void window_set_user_data(Window *window, void *data);
 
 //! Gets the pointer to developer-supplied data that was previously
@@ -3065,8 +3617,6 @@ bool window_stack_contains_window(Window *window);
 struct Animation;
 typedef struct Animation Animation;
 
-#define NUM_ANIMATION_CURVE 4
-
 //! Values that are used to indicate the different animation curves,
 //! which determine the speed at which the animated value(s) change(s).
 typedef enum {
@@ -3078,8 +3628,12 @@ typedef enum {
   AnimationCurveEaseOut = 2,
   //! Bicubic ease-in-out: accelerate from zero velocity, decelerate to zero velocity
   AnimationCurveEaseInOut = 3,
-  //! Number of available AnimationCurve types
-  NumAnimationCurve = NUM_ANIMATION_CURVE
+  //! Custom (user-provided) animation curve
+  AnimationCurveCustomFunction = 4,
+  //! Reserved for forward-compatibility use.
+  AnimationCurve_Reserved1 = 5,
+  AnimationCurve_Reserved2 = 6,
+  AnimationCurve_Reserved3 = 7
 } AnimationCurve;
 
 //! Creates a new Animation on the heap and initalizes it with the default values.
@@ -3103,14 +3657,14 @@ void animation_destroy(struct Animation *animation);
 //! should run indefinitely.
 //! This is useful when implementing for example a frame-by-frame simulation that does not
 //! have a clear ending (e.g. a game).
-//! @note Note that `time_normalized` parameter that is passed
+//! @note Note that `distance_normalized` parameter that is passed
 //! into the `.update` implementation is meaningless in when an infinite duration is used.
 #define ANIMATION_DURATION_INFINITE ((uint32_t) ~0)
 
-//! The normalized time at the start of the animation.
+//! The normalized distance at the start of the animation.
 #define ANIMATION_NORMALIZED_MIN 0
 
-//! The normalized time at the end of the animation.
+//! The normalized distance at the end of the animation.
 #define ANIMATION_NORMALIZED_MAX 65535
 
 //! Sets the time in milliseconds that an animation takes from start to finish.
@@ -3129,9 +3683,18 @@ void animation_set_delay(struct Animation *animation, uint32_t delay_ms);
 //! @param animation The animation for which to set the curve.
 //! @param curve The type of curve.
 //! @see AnimationCurve
-//! @note It is up to the implementation of the animation to actually use the curve.
-//! Because a curve type is often used for animations, it is included in the animation base layer.
 void animation_set_curve(struct Animation *animation, AnimationCurve curve);
+
+//! The function pointer type of a custom animation curve.
+//! @param linear_distance The linear normalized animation distance to be curved.
+//! @see animation_set_custom_curve
+typedef uint32_t (*AnimationCurveFunction)(uint32_t linear_distance);
+
+//! Sets a custom animation curve function.
+//! @param animation The animation for which to set the curve.
+//! @param curve_function The custom animation curve function.
+//! @see AnimationCurveFunction
+void animation_set_custom_curve(struct Animation *animation, AnimationCurveFunction curve_function);
 
 //! The function pointer type of the handler that will be called when an animation is started,
 //! just before updating the first frame of the animation.
@@ -3221,6 +3784,13 @@ typedef struct Animation {
   uint32_t duration_ms;
   AnimationCurve curve:3;
   bool is_completed:1;
+  //! Pointer to a custom curve. Unfortunately, due to backward-compatibility
+  //! constraints, it must fit into 28 bits.
+  //! It is only valid when curve == AnimationCurveCustomFunction.
+  //! The mapping from 28-bit field to pointer is unpublished. Call
+  //! animation_set_custom_curve() to ensure your app continues to run
+  //! after future Pebble updates.
+  uintptr_t custom_curve_function:28;
 } Animation;
 
 //! Pointer to function that (optionally) prepares the animation for running.
@@ -3230,20 +3800,27 @@ typedef struct Animation {
 //! @see AnimationTeardownImplementation
 typedef void (*AnimationSetupImplementation)(struct Animation *animation);
 
-//! Pointer to function that updates the animation according to the given normalized time.
+//! Pointer to function that updates the animation according to the given normalized distance.
 //! This callback will be called repeatedly by the animation scheduler whenever the animation needs to be updated.
 //! @param animation The animation that needs to update; gets passed in by the animation framework.
-//! @param time_normalized The current normalized time; gets passed in by the animation framework for each animation frame.
+//! @param distance_normalized The current normalized distance; gets passed in by the animation framework for each animation frame.
 //! This is a value between \ref ANIMATION_NORMALIZED_MIN and \ref ANIMATION_NORMALIZED_MAX.
 //! At the start of the animation, the value will be \ref ANIMATION_NORMALIZED_MIN.
 //! At the end of the animation, the value will be \ref ANIMATION_NORMALIZED_MAX.
-//! For each frame during the animation, the value will be the running time, mapped linearly between
-//! \ref ANIMATION_NORMALIZED_MIN and \ref ANIMATION_NORMALIZED_MAX.
-//! For example, say an animation was scheduled at t = 1.0s, has a delay of 1.0s and a duration of 2.0s.
-//! Then the .update callback will get called on t = 2.0s with time_normalized = \ref ANIMATION_NORMALIZED_MIN.
-//! For each frame thereafter until t = 4.0s, the update callback will get called where time_normalized is
+//! For each frame during the animation, the value will be the distance along the
+//! animation path, mapped between \ref ANIMATION_NORMALIZED_MIN and
+//! \ref ANIMATION_NORMALIZED_MAX based on the animation duration and the
+//! \ref AnimationCurve set.
+//! For example, say an animation was scheduled at t = 1.0s, has a delay of 1.0s,
+//! a duration of 2.0s and a curve of AnimationCurveLinear.
+//! Then the .update callback will get called on t = 2.0s with
+//! distance_normalized = \ref ANIMATION_NORMALIZED_MIN. For each frame
+//! thereafter until t = 4.0s, the update callback will get called where
+//! distance_normalized is
 //! (\ref ANIMATION_NORMALIZED_MIN + (((\ref ANIMATION_NORMALIZED_MAX - \ref ANIMATION_NORMALIZED_MIN) * t) / duration)).
-typedef void (*AnimationUpdateImplementation)(struct Animation *animation, const uint32_t time_normalized);
+//! Other animation curves will result in a non-linear relation between
+//! distance_normalized and time.
+typedef void (*AnimationUpdateImplementation)(struct Animation *animation, const uint32_t distance_normalized);
 
 //! Pointer to function that (optionally) cleans up the animation.
 //! This callback is called when the animation is removed from the scheduler.
@@ -3382,10 +3959,9 @@ typedef struct PropertyAnimation {
 //! It sets up the PropertyAnimation to use \ref layer_set_frame() and \ref layer_get_frame()
 //! as accessors and uses the `layer` parameter as the subject for the animation.
 //! The same defaults are used as with \ref animation_create().
-//! @param property_animation The property animation to initialize and set up
 //! @param layer the layer that will be animated
-//! @param to_frame the frame that the layer should animate to
 //! @param from_frame the frame that the layer should animate from
+//! @param to_frame the frame that the layer should animate to
 //! @note Pass in `NULL` as one of the frame arguments to have it set automatically to the layer's current frame.
 //! This will result in a call to \ref layer_get_frame() to get the current frame of the layer.
 //! @return A pointer to the property animation. `NULL` if animation could not
@@ -3420,10 +3996,10 @@ void property_animation_destroy(struct PropertyAnimation* property_animation);
 //! The implementation of this function will calculate the next value of the animation and call the
 //! setter to set the new value upon the subject.
 //! @param property_animation The property animation for which the update is requested.
-//! @param time_normalized The current normalized time. See \ref AnimationUpdateImplementation
+//! @param distance_normalized The current normalized distance. See \ref AnimationUpdateImplementation
 //! @note This function is not supposed to be called "manually", but will be called automatically when the animation
 //! is being run.
-void property_animation_update_int16(struct PropertyAnimation *property_animation, const uint32_t time_normalized);
+void property_animation_update_int16(struct PropertyAnimation *property_animation, const uint32_t distance_normalized);
 
 //! Default update callback for a property animations to update a property of type GPoint.
 //! Assign this function to the `.base.update` callback field of your PropertyAnimationImplementation,
@@ -3431,10 +4007,10 @@ void property_animation_update_int16(struct PropertyAnimation *property_animatio
 //! The implementation of this function will calculate the next point of the animation and call the
 //! setter to set the new point upon the subject.
 //! @param property_animation The property animation for which the update is requested.
-//! @param time_normalized The current normalized time. See \ref AnimationUpdateImplementation
+//! @param distance_normalized The current normalized distance. See \ref AnimationUpdateImplementation
 //! @note This function is not supposed to be called "manually", but will be called automatically when the animation
 //! is being run.
-void property_animation_update_gpoint(struct PropertyAnimation *property_animation, const uint32_t time_normalized);
+void property_animation_update_gpoint(struct PropertyAnimation *property_animation, const uint32_t distance_normalized);
 
 //! Default update callback for a property animations to update a property of type GRect.
 //! Assign this function to the `.base.update` callback field of your PropertyAnimationImplementation,
@@ -3442,10 +4018,10 @@ void property_animation_update_gpoint(struct PropertyAnimation *property_animati
 //! The implementation of this function will calculate the next rectangle of the animation and call the
 //! setter to set the new rectangle upon the subject.
 //! @param property_animation The property animation for which the update is requested.
-//! @param time_normalized The current normalized time. See \ref AnimationUpdateImplementation
+//! @param distance_normalized The current normalized distance. See \ref AnimationUpdateImplementation
 //! @note This function is not supposed to be called "manually", but will be called automatically when the animation
 //! is being run.
-void property_animation_update_grect(struct PropertyAnimation *property_animation, const uint32_t time_normalized);
+void property_animation_update_grect(struct PropertyAnimation *property_animation, const uint32_t distance_normalized);
 
 //! Work-around for function pointer return type GPoint avoid
 //! tripping the pre-processor to use the equally named GPoint define
@@ -3956,6 +4532,7 @@ typedef struct MenuIndex {
   uint16_t row;
 } MenuIndex;
 
+//! Macro to create a MenuIndex
 #define MenuIndex(section, row) ((MenuIndex){ (section), (row) })
 
 //! Comparator function to determine the order of two MenuIndex values.
@@ -4335,7 +4912,6 @@ typedef struct {
 
 //! Creates a new SimpleMenuLayer on the heap and initializes it.
 //! It also sets the internal click configuration provider onto given window.
-//! @param simple_menu Pointer to the SimpleMenuLayer to initialize
 //! @param frame The frame at which to initialize the menu
 //! @param window The window onto which to set the click configuration provider
 //! @param sections Array with sections that need to be displayed in the menu
@@ -4515,7 +5091,6 @@ void action_bar_layer_set_click_config_provider(ActionBarLayer *action_bar, Clic
 //! @param button_id The identifier of the button for which to set the icon
 //! @param icon Pointer to the \ref GBitmap icon
 //! @see action_bar_layer_set_click_config_provider()
-//! @see \ref MediaUtils
 void action_bar_layer_set_icon(ActionBarLayer *action_bar, ButtonId button_id, const GBitmap *icon);
 
 //! Convenience function to clear out an existing icon.
@@ -4618,7 +5193,6 @@ const GBitmap* bitmap_layer_get_bitmap(BitmapLayer *bitmap_layer);
 //! The bitmap layer is automatically marked dirty after this operation.
 //! @param bitmap_layer The BitmapLayer for which to set the bitmap image
 //! @param bitmap The new \ref GBitmap to set onto the BitmapLayer
-//! @see See \ref MediaUtils for utilities to help with resource loading and bitmap handling.
 void bitmap_layer_set_bitmap(BitmapLayer *bitmap_layer, const GBitmap *bitmap);
 
 //! Sets the alignment of the image to draw with in frame of the BitmapLayer.
@@ -4657,28 +5231,77 @@ void bitmap_layer_set_compositing_mode(BitmapLayer *bitmap_layer, GCompOp mode);
 //! @} // group BitmapLayer
 
 //! @addtogroup RotBitmapLayer
+//! \brief Layer that displays a rotated bitmap image.
+//!
+//! A RotBitmapLayer is like a \ref BitmapLayer but has the ability to be rotated (by default, around its center). The amount of rotation
+//! is specified using \ref rot_bitmap_layer_set_angle() or \ref rot_bitmap_layer_increment_angle(). The rotation argument
+//! to those functions is specified as an amount of clockwise rotation, where the value 0x10000 represents a full 360 degree
+//! rotation and 0 represent no rotation, and it scales linearly between those values, just like \ref sin_lookup.
+//!
+//! The center of rotation in the source bitmap is always placed at the center of the RotBitmapLayer and the size of the RotBitmapLayer
+//! is automatically calculated so that the entire Bitmap can fit in at all rotation angles.
+//!
+//! For example, if the image is 10px wide and high, the RotBitmapLayer will be 14px wide ( sqrt(10^2+10^2) ).
+//!
+//! By default, the center of rotation in the source bitmap is the center of the bitmap but you can call \ref rot_bitmap_set_src_ic() to change the
+//! center of rotation.
+//!
 //! @{
 
 struct RotBitmapLayer;
 typedef struct RotBitmapLayer RotBitmapLayer;
 
+//! Creates a new RotBitmapLayer on the heap and initializes it with the default values:
+//!  * Angle: 0
+//!  * Compositing mode: \ref GCompOpAssign
+//!  * Corner clip color: \ref GColorClear
+//!
+//! @param bitmap The bitmap to display in this RotBitmapLayer
 //! @return A pointer to the RotBitmapLayer. `NULL` if the RotBitmapLayer could not
 //! be created
 RotBitmapLayer* rot_bitmap_layer_create(GBitmap *bitmap);
 
+//! Destroys a RotBitmapLayer and frees all associated memory.
+//! @note It is the developer responsibility to free the \ref GBitmap.
+//! @param bitmap The RotBitmapLayer to destroy.
 void rot_bitmap_layer_destroy(RotBitmapLayer *bitmap);
 
-void rot_bitmap_layer_set_corner_clip_color(RotBitmapLayer *image, GColor color);
+//! Defines what color to use in areas that are not covered by the source bitmap.
+//! By default this is \ref GColorClear.
+//! @param bitmap The RotBitmapLayer on which to change the corner clip color
+//! @param color The corner clip color
+void rot_bitmap_layer_set_corner_clip_color(RotBitmapLayer *bitmap, GColor color);
 
-//! sets rotation to the given angle
-void rot_bitmap_layer_set_angle(RotBitmapLayer *image, int32_t angle);
+//! Sets the rotation angle of this RotBitmapLayer
+//! @param bitmap The RotBitmapLayer on which to change the rotation
+//! @param angle Rotation is an integer between 0 (no rotation) and 0x10000 (360 degree rotation). @see sin_lookup()
+void rot_bitmap_layer_set_angle(RotBitmapLayer *bitmap, int32_t angle);
 
-//! changes the rotation by the given amount
-void rot_bitmap_layer_increment_angle(RotBitmapLayer *image, int32_t angle_change);
+//! Change the rotation angle of this RotBitmapLayer
+//! @param bitmap The RotBitmapLayer on which to change the rotation
+//! @param angle_change The rotation angle change
+void rot_bitmap_layer_increment_angle(RotBitmapLayer *bitmap, int32_t angle_change);
 
-void rot_bitmap_set_src_ic(RotBitmapLayer *image, GPoint ic);
+//! Defines the only point that will not be affected by the rotation in the source bitmap.
+//!
+//! For example, if you pass GPoint(0, 0), the image will rotate around the top-left corner.
+//!
+//! This point is always projected at the center of the RotBitmapLayer. Calling this function
+//! automatically adjusts the width and height of the RotBitmapLayer so that
+//! the entire bitmap can fit inside the layer at all rotation angles.
+//!
+//! @param bitmap The RotBitmapLayer on which to change the rotation
+//! @param ic The only point in the original image that will not be affected by the rotation.
+void rot_bitmap_set_src_ic(RotBitmapLayer *bitmap, GPoint ic);
 
-void rot_bitmap_set_compositing_mode(RotBitmapLayer *image, GCompOp mode);
+//! Sets the compositing mode of how the bitmap image is composited onto what has been drawn beneath the
+//! RotBitmapLayer.
+//! By default this is \ref GCompOpAssign.
+//! The RotBitmapLayer is automatically marked dirty after this operation.
+//! @param bitmap The RotBitmapLayer on which to change the rotation
+//! @param mode The compositing mode to set
+//! @see \ref GCompOp for visual examples of the different compositing modes.
+void rot_bitmap_set_compositing_mode(RotBitmapLayer *bitmap, GCompOp mode);
 
 //! @} // group RotBitmapLayer
 
@@ -4856,10 +5479,6 @@ void light_enable(bool enable);
 //! @} // group Light
 
 //! @} // group UI
-
-//!   @} // group Animation
-//! @} // group UI
-typedef int32_t (*AnimationTimingFunction)(uint32_t time_normalized);
 
 //! Returns the current time in Unix Timestamp Format with Milliseconds
 //!     @param tloc if provided receives current Unix Time seconds portion

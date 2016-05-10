@@ -1,3 +1,4 @@
+test/include
 tests/run
 .lock*
 dist.zip

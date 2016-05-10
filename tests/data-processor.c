@@ -1,41 +1,7 @@
-/*
-
-Data Processor v1.1
-A Pebble library for extracting elements from a delimited string.
-http://smallstoneapps.github.io/data-processor/
-
-----------------------
-
-The MIT License (MIT)
-
-Copyright © 2014 Matthew Tole
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
---------------------
-
-tests/data-processor.c
-
-*/
-
 #include "unit.h"
-#include "../src/data-processor.h"
+#include "data-processor.h"
+
+#define VERSION_LABEL "2.1.0"
 
 // Colour code definitions to make the output all pretty.
 #define KNRM  "\x1B[0m"
@@ -238,7 +204,7 @@ static char* all_tests() {
 // Executes all the tests and prints the results in pretty colours.
 int main(int argc, char **argv) {
   printf("%s------------------------------------\n", KCYN);
-  printf("| Running Data Processor %d.%d Tests |\n", DATA_PROCESSOR_VERSION_MAJOR, DATA_PROCESSOR_VERSION_MINOR);
+  printf("| Running Data Processor %s Tests |\n", VERSION_LABEL);
   printf("------------------------------------\n%s", KNRM);
   char* result = all_tests();
   if (0 != result) {

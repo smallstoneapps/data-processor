@@ -1,5 +1,5 @@
 {
-  "name": "pebble-data-processor",
+  "name": "@smallstoneapps/data-processor",
   "version": "2.0.0",
   "description": "Pebble library to extract strings, ints and booleans from a long string of data.",
   "main": "src/c/data-processor.c",
@@ -21,7 +21,6 @@
   "homepage": "https://github.com/smallstoneapps/data-processor#readme",
   "pebble": {
     "sdkVersion": "3",
-    "enableMultiJS": true,
     "targetPlatforms": [
       "aplite",
       "basalt",

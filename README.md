@@ -1,4 +1,4 @@
-# Data Processor [![Build Status](http://img.shields.io/travis/smallstoneapps/data-processor.svg?style=flat-square)](https://travis-ci.org/smallstoneapps/data-processor/)&nbsp;![Version 1.1](http://img.shields.io/badge/version-1.1-orange.svg?style=flat-square)&nbsp;[![MIT License](http://img.shields.io/badge/license-MIT-lightgray.svg?style=flat-square)](./LICENSE)
+# Data Processor [![Build Status](http://img.shields.io/travis/smallstoneapps/data-processor.svg?style=flat-square)](https://travis-ci.org/smallstoneapps/data-processor/)&nbsp;![Version 2.1.0](http://img.shields.io/badge/version-2.1.0-orange.svg?style=flat-square)&nbsp;[![MIT License](http://img.shields.io/badge/license-MIT-lightgray.svg?style=flat-square)](./LICENSE)
 
 
 Pebble library to extract strings, ints and booleans from a long string of data.
