@@ -1,7 +1,7 @@
 #include "unit.h"
 #include "data-processor.h"
 
-#define VERSION_LABEL "2.1.0"
+#define VERSION_LABEL "2.0.3"
 
 // Colour code definitions to make the output all pretty.
 #define KNRM  "\x1B[0m"

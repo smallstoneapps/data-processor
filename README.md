@@ -1,7 +1,16 @@
-# Data Processor [![Build Status](http://img.shields.io/travis/smallstoneapps/data-processor.svg?style=flat-square)](https://travis-ci.org/smallstoneapps/data-processor/)&nbsp;![Version 2.1.0](http://img.shields.io/badge/version-2.1.0-orange.svg?style=flat-square)&nbsp;[![MIT License](http://img.shields.io/badge/license-MIT-lightgray.svg?style=flat-square)](./LICENSE)
-
+# Data Processor [![Build Status](http://img.shields.io/travis/smallstoneapps/data-processor.svg?style=flat-square)](https://travis-ci.org/smallstoneapps/data-processor/)&nbsp;[![npm (scoped)](https://img.shields.io/npm/v/@smallstoneapps/data-processor.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/@smallstoneapps/data-processor)&nbsp;[![MIT License](http://img.shields.io/badge/license-MIT-lightgray.svg?style=flat-square)](./LICENSE)
 
 Pebble library to extract strings, ints and booleans from a long string of data.
+
+## Installation
+
+*You must be using Pebble SDK 3.12 or newer to use this library.*
+
+To install the package to your app, use the pebble tool:
+
+```
+pebble package install @smallstoneapps/data-processor
+```
 
 ## Usage
 

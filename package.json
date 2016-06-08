@@ -1,6 +1,6 @@
 {
   "name": "@smallstoneapps/data-processor",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Pebble library to extract values from a delimited string",
   "main": "src/c/data-processor.c",
   "directories": {
@@ -9,6 +9,9 @@
   "scripts": {
     "test": "make"
   },
+  "keywords": [
+    "pebble-package"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smallstoneapps/data-processor.git"
