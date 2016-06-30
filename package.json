@@ -1,6 +1,6 @@
 {
   "name": "@smallstoneapps/data-processor",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Pebble library to extract values from a delimited string",
   "main": "src/c/data-processor.c",
   "directories": {
@@ -33,6 +33,8 @@
     ]
   },
   "files": [
-    "dist.zip"
+    "dist.zip",
+    "src/",
+    "include/"
   ]
 }
