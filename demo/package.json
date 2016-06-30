@@ -1,0 +1,41 @@
+{
+  "name": "@smallstoneapps/data-processor-demo",
+  "description": "Demo app to show the basic usage of the data-processor package",
+  "version": "1.0.0",
+  "author": "Matthew Tole",
+  "private": true,
+  "main": "src/main.c",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@smallstoneapps/data-processor": "../"
+  },
+  "keywords": [
+    "pebble-app"
+  ],
+  "pebble": {
+    "sdkVersion": "3",
+    "resources": {
+      "media": []
+    },
+    "projectType": "native",
+    "uuid": "b77de6cd-15f4-4f42-86f4-1f6bb3591996",
+    "messageKeys": {},
+    "enableMultiJS": false,
+    "displayName": "Data Processor Demo",
+    "watchapp": {
+      "onlyShownOnCommunication": false,
+      "hiddenApp": false,
+      "watchface": false
+    },
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "capabilities": []
+  }
+}

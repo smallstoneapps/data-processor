@@ -1,2 +1,4 @@
 build
 .lock-waf*
+
+node_modules/
